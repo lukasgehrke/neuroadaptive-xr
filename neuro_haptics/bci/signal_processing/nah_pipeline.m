@@ -6,7 +6,7 @@
 function nah_pipeline(subjects)
 
     %% config
-    current_sys = "c060"; %"mac"% 
+    current_sys = "mac"; %"mac"% c060
     eeglab_ver(current_sys);
     
     %% load configuration
@@ -23,7 +23,7 @@ function nah_pipeline(subjects)
     end
     
     %% export features
-    
+
     for subject = subjects
     
         disp(subject);
@@ -122,6 +122,13 @@ function nah_pipeline(subjects)
 
         fix_delay = fix_delay';
         fix_delay = table(fix_delay);
+
+        % catch some errors manually
+        switch subject
+            case 7
+                quest_table(1,:) = [];
+                
+        end
     
         behavior = [event_table quest_table pa_table fix_delay];
         writetable(behavior, strcat(out_path, filesep, sprintf('behavior_s%d.csv', subject)), 'Delimiter', ';');
