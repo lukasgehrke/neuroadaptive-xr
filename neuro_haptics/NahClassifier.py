@@ -24,8 +24,12 @@ class NahClassifier:
             bci_params = json.load(f)
         self.mean_fix_delay = bci_params['mean_fix_delay']
         
-        with open(model_path+'top_channels.json', 'r') as f:
-            self.top_channels = json.load(f)
+        # with open(model_path+'top_channels.json', 'r') as f:
+            # self.top_channels = json.load(f)
+
+        with open(model_path+'top_features.json', 'r') as f:
+            self.top_features = json.load(f)
+
         with open(model_path+'lda_scores.json', 'r') as f:
             self.lda_scores = json.load(f)
             self.lda_scores = [item for sublist in self.lda_scores for item in sublist]
@@ -283,7 +287,8 @@ class NahClassifier:
         # eeg processing and feature extraction
         if modality == 'eeg':
 
-            erp_selected = data[self.top_channels, :]
+            # erp_selected = data[self.top_channels, :]
+            erp_selected = data[:, :]
             erp_selected = np.expand_dims(erp_selected, axis=2)
             erp_selected = bandpass_filter_fft(erp_selected, 0.1, 15, 250)
 
@@ -297,9 +302,18 @@ class NahClassifier:
             
             baseline = erp_selected[:,0]
             erp_corrected = erp_selected - baseline[:, np.newaxis]
-            erp_corrected = erp_corrected[:,2:].flatten()
+            # erp_corrected = erp_corrected[:,2:].flatten()
 
-            return erp_corrected
+            # add feature selection
+            erp_corrected = erp_corrected[:,1:].flatten()
+
+            # TODO test this!!
+            for (ch, tw) in enumerate(self.top_features):
+                feature = erp_corrected[ch, tw]
+
+            return feature
+        
+            # return erp_corrected
         
         elif modality == 'motion':
 
