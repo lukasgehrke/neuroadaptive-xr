@@ -33,6 +33,39 @@ def bandpass_filter_fft(data, lowcut, highcut, fs):
     # Return the real part of the filtered data
     return np.real(filtered_data)
 
+def average_power_fft(data, lowcut, highcut, fs):
+    """
+    Compute the average power of a specified frequency band using FFT.
+
+    Parameters:
+    data (numpy.ndarray): 3D array of ERP data with shape (channels, samples, trials)
+    lowcut (float): Low cutoff frequency in Hz
+    highcut (float): High cutoff frequency in Hz
+    fs (float): Sampling frequency in Hz
+
+    Returns:
+    numpy.ndarray: Average power of the specified frequency band
+    """
+    # Perform FFT on the data
+    fft_data = np.fft.fft(data, axis=1)
+    freqs = np.fft.fftfreq(data.shape[1], d=1/fs)
+
+    # Create a frequency mask
+    mask = (np.abs(freqs) >= lowcut) & (np.abs(freqs) <= highcut)
+    mask = mask.reshape((1, -1, 1))  # Reshape mask to match the dimensions of fft_data
+
+    # Apply the mask to the FFT data
+    fft_data_masked = fft_data * mask
+
+    # Compute the power spectrum
+    power_spectrum = np.abs(fft_data_masked) ** 2
+
+    # Compute the average power in the specified frequency band
+    # average_power = np.mean(power_spectrum, axis=1)
+    # return average_power
+
+    return power_spectrum
+
 def windowed_mean(data, srate, window_size):
     
     n_windows = int(np.floor(1000 / window_size)) # int(np.floor(srate / window_size))
