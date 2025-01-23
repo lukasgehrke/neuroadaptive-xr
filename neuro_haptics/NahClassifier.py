@@ -1,3 +1,9 @@
+
+
+ID = 7
+TESTING = False
+
+############################################################################################################
 from pylsl import StreamInlet, StreamOutlet, StreamInfo, resolve_byprop
 import pickle, time, os, json
 import numpy as np
@@ -27,7 +33,7 @@ class NahClassifier:
         # with open(model_path+'top_channels.json', 'r') as f:
             # self.top_channels = json.load(f)
 
-        with open(model_path+'top_features.json', 'r') as f:
+        with open(model_path+'top_features_erp.json', 'r') as f:
             self.top_features = json.load(f)
 
         with open(model_path+'lda_scores.json', 'r') as f:
@@ -305,11 +311,13 @@ class NahClassifier:
             # erp_corrected = erp_corrected[:,2:].flatten()
 
             # add feature selection
-            erp_corrected = erp_corrected[:,1:].flatten()
+            #erp_corrected = erp_corrected[:,1:].flatten()
 
-            # TODO test this!!
-            for (ch, tw) in enumerate(self.top_features):
-                feature = erp_corrected[ch, tw]
+            erp_corrected = erp_corrected[:,1:]
+            feature = np.zeros((len(self.top_features)))
+
+            for i, (ch, tw) in enumerate(self.top_features):
+                feature[i] = erp_corrected[ch, tw]
 
             return feature
         
@@ -412,7 +420,7 @@ class NahClassifier:
 # main
 if __name__ == "__main__":
    
-    pID = 'sub-' + "14"
+    pID = 'sub-' + str(ID)
     path = r'P:\Lukas_Gehrke\NAH\data\5_single-subject-EEG-analysis'
 
     classifier = NahClassifier(path, pID)
@@ -423,34 +431,38 @@ if __name__ == "__main__":
     try:
         while True:
 
-            # # for testing
-            # grab_ts = time.time()
+            # for testing
+            if TESTING:
+                grab_ts = time.time()
 
-            # tic = time.time()
-            # label = classifier.choose_nah_label(grab_ts)
-            # print(f"Time to choose label: {time.time() - tic}")
+                tic = time.time()
+                label = classifier.choose_nah_label(grab_ts)
+                print(f"Time to choose label: {time.time() - tic}")
 
-            # classifier.send_nah_label_to_ai(label)
-            # print("Label sent to AI: ", label)
+                classifier.send_nah_label_to_ai(label)
+                print("Label sent to AI: ", label)
+                time.sleep(4)
 
-            marker, grab_ts = classifier.marker_inlet.pull_sample()
+            else:
+                marker, grab_ts = classifier.marker_inlet.pull_sample()
 
-            if marker and 'What:' in marker[0]:
-                marker_data = marker[0].split(';')
-                marker_dict = {item.split(':')[0]: item.split(':')[1] for item in marker_data}
-                what = marker_dict.get('What')
-                
-                if what == 'grab':
-                    current_grab_number = int(marker_dict.get('Number', 0))
+                if marker and 'What:' in marker[0]:
+                    marker_data = marker[0].split(';')
+                    marker_dict = {item.split(':')[0]: item.split(':')[1] for item in marker_data}
+                    what = marker_dict.get('What')
+                    
+                    if what == 'grab':
+                        current_grab_number = int(marker_dict.get('Number', 0))
 
-                    if current_grab_number > last_grab_number:           
-                        print(f"Grab {current_grab_number} detected: ", marker)
+                        if current_grab_number > last_grab_number:           
+                            print(f"Grab {current_grab_number} detected: ", marker)
 
-                        tic = time.time()
-                        label = classifier.choose_nah_label(tic)
-                        print(f"Time to choose label: {time.time() - tic}")
+                            tic = time.time()
+                            label = classifier.choose_nah_label(tic)
+                            print(f"Time to choose label: {time.time() - tic}")
 
-                        classifier.send_nah_label_to_ai(label)
-                        print("Label sent to AI: ", label)
+                            classifier.send_nah_label_to_ai(label)
+                            print("Label sent to AI: ", label)
+
     except KeyboardInterrupt:
         print("Exiting...")
