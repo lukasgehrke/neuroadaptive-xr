@@ -6,7 +6,7 @@
 function nah_pipeline(subjects)
 
     %% config
-    current_sys = "mac"; %"mac"% c060
+    current_sys = "c060"; %"mac"% 
     eeglab_ver(current_sys);
     
     %% load configuration
@@ -94,7 +94,9 @@ function nah_pipeline(subjects)
     
         % clean epochs and remove 5 percent of bad epochs from data
         [~, rmepochs] = pop_autorej(EEG, 'nogui', 'on');
-        rmepochs = rmepochs(1:.1*size(EEG.data,3));
+        if size(rmepochs,2) > .1*size(EEG.data,3)
+            rmepochs = rmepochs(1:.1*size(EEG.data,3));
+        end
     
         % add column bad_epoch to event_table and set to 1 for rmepoch indices
         event_table.bad_epoch = zeros(height(event_table), 1);
@@ -127,7 +129,6 @@ function nah_pipeline(subjects)
         switch subject
             case 7
                 quest_table(1,:) = [];
-                
         end
     
         behavior = [event_table quest_table pa_table fix_delay];
