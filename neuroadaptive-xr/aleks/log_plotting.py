@@ -23,7 +23,7 @@ def plot_q_values(df_plot_q_values, ax, initial_q_value=0):
                           color=line_colors)
 
 def plot_additional_metrics(df, ax):
-    df.plot('t', ['reward_adjusted', 'alpha', 'epsilon'],
+    df.plot('t', ['reward', 'alpha', 'epsilon'],
             # Re-enable when plotting not_separate
             #  color=['lightblue', 'lightgreen', 'lightpink'], 
              ax=ax, zorder=0, linewidth=1)
