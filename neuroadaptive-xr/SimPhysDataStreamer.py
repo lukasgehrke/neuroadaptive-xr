@@ -13,7 +13,7 @@ class SimPhysDataStreamer(threading.Thread):
 
         # Load EEG and Eye data
         # fname = 'example_data/fastReach_s16_Baseline.xdf'
-        fname = r'C:\Users\Lukas\Desktop\nah\tst-eeg\data\0_source-data\sub-001\nah.xdf'
+        fname = r'/Users/schnuckiputz/Downloads/neuroadaptive-xr-data-simulation/nah_stream_recording.xdf'
         self.data, header = pyxdf.load_xdf(fname)
 
         self.eeg_stream_name = 'BrainVision RDA'
@@ -80,7 +80,7 @@ class SimPhysDataStreamer(threading.Thread):
             # Print currently elapsed min:sec
             formatted_timestamp = time.strftime("%M:%S", time.gmtime(self.eeg_time_stamps[self.eeg_ix]))
             if formatted_timestamp != last_formatted_timestamp:
-                print(formatted_timestamp)
+                print(f'{self.eeg_ix} - {formatted_timestamp}')
                 last_formatted_timestamp = formatted_timestamp
 
             # push to self.labels
@@ -89,7 +89,7 @@ class SimPhysDataStreamer(threading.Thread):
             # if self.eye_stream_name != '':
             #     self.send_eye()
 
-            # self.send_events()
+            self.send_events()
 
             # wait for 1 second
             time.sleep(self.sample_interval[self.eeg_ix])

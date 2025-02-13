@@ -1,6 +1,6 @@
 
 
-ID = 7
+ID = 0
 TESTING = False
 
 ############################################################################################################
@@ -421,7 +421,8 @@ class NahClassifier:
 if __name__ == "__main__":
    
     pID = 'sub-' + str(ID)
-    path = r'P:\Lukas_Gehrke\NAH\data\5_single-subject-EEG-analysis'
+    # path = r'P:\Lukas_Gehrke\NAH\data\5_single-subject-EEG-analysis''
+    path = r'/Users/schnuckiputz/Downloads/neuroadaptive-xr-data-simulation'
 
     classifier = NahClassifier(path, pID)
 
