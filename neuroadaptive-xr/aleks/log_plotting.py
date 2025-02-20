@@ -33,7 +33,7 @@ def customize_plot(ax):
             #    zorder=0, linewidth=1
                )
     handles, labels = ax.get_legend_handles_labels()
-    ax.legend(handles[:5] + handles[10:], labels[:5] + labels[10:], fontsize='small')
+    ax.legend(handles[:5] + handles[10:], labels[:5] + labels[10:], fontsize=8)
 
 def plot_q_learning(df, ax):
     df_plot_q_values = df.pivot(index='t', columns='action', values='new_Q_value')
@@ -56,4 +56,14 @@ def plot_q_learning_separate(df, ax):
        
     handles1, labels1 = ax1.get_legend_handles_labels()
     num_actions = 4
-    ax1.legend(handles1[:num_actions], labels1[:num_actions], fontsize='small')
+    # ax1.legend(handles1[:num_actions], labels1[:num_actions], fontsize=8)
+
+    ax1.get_xaxis().set_visible(False)
+    # ax1.spines['bottom'].set_visible(False)
+    ax1.set_ylabel('Q-value')
+    ax2.set_xlabel('Steps')
+    ax2.set_ylabel('Metric')
+    ax2.legend(fontsize=8)
+
+    labels = ['baseline', 'sound', 'vibration', 'vibration\n+sound']  
+    ax1.legend(handles1[:num_actions], labels, fontsize=8, loc='lower right')    
