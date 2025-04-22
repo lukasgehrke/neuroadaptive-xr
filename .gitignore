@@ -1,6 +1,9 @@
 neuroadaptive-xr/__pycache__/bci_funcs.cpython-310.pyc
 *.DS_Store
 *.pyc
+key_sources/
+submissions/
+
 neuroadaptive-xr/aleks/logs
 neuroadaptive-xr/aleks/rl/logs
 analyses/*.png
