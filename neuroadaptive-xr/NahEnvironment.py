@@ -3,16 +3,21 @@ import time, random, json, os
 import logging
 import numpy as np
 
+seed = os.environ.get("MY_RANDOM_SEED")
+if seed is not None:
+    random.seed(int(seed))
+    np.random.seed(int(seed))
+    
 from SimPhysDataStreamer import SimPhysDataStreamer
 from Classifier import Classifier
 from LabelMaker import LabelMaker
 
-import sys
-# Adding to path so we can import `rl`
-sys.path.append(os.path.join(os.path.dirname(__file__), 'aleks'))
 
-# Now you can import UCBQEnvironment
+import sys
+
+sys.path.append(os.path.join(os.path.dirname(__file__), 'aleks'))
 from rl.ucbq_environment import ModifiedRandomEnvironment
+
 
 
 # Setup logging
